@@ -1,0 +1,10 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE configuration PUBLIC "-//mybatis.org//DTD Config 3.0//EN" "http://mybatis.org/dtd/mybatis-3-config.dtd" >
+<configuration>
+	<!-- myBatis 설정 -->
+	<settings>
+	  <!-- 전통적인 데이터베이스 컬럼형 형태인 대문자 A_COLUMN을 카멜표기형태로 aClolumn 자동으로 변환해서  get/set으로 사용 -->
+	  <!-- <setting name="mapUnderscoreToCamelCase" value="true"></setting> -->
+	  <setting name="jdbcTypeForNull" value="VARCHAR"/>
+	</settings>
+</configuration>
