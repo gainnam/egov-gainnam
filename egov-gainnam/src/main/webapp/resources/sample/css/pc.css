@@ -1,0 +1,80 @@
+@charset "UTF-8";
+/*PC용 스타일시작*/
+/*미디어쿼리:미디어의 가로크기나 768px 이상이면
+아래 스타일 적용*/
+@media all and (min-width:1132px) {
+
+/*슬라이드 영역 시작*/
+.carousel-item, .carousel-item img {height:700px;}
+/*슬라이드 영역 끝*/
+
+/*weare 영역 시작*/
+.weare-header {
+margin:0 3%/*가운데정렬이면서 가운데 정렬이 3%*/;
+margin-top:30px;
+text-align:left;/*내부 글자들 좌우 정렬을 왼쪽으로 지정*/
+}
+.weare-header .section-title {
+float:left;
+width:50%;
+}
+.weare-header p {
+float:right;
+width:50%;
+position:relative;/*p태그내용을 상대위치로 배치*/
+padding-left:20px;/*before가상요소가 나타날 영역을 넓히는 역할*/
+}
+.weare-header p::before {/*p태그앞에 가상요소로 짝대기 하나 만듭니다. a:hover가상클래스*/
+display:block;
+position:absolute;/*weare-header영역 안 쪽에서 절대위치*/
+top:7px;
+left:0px;
+width:2px;/*짝대기 가로크기*/
+height:40px;/*짝대기 세로크기*/
+background:#ccc;/*짝대기 생상*/
+content:"";}/*짝대기만 만들고, 내용은 빈공간으로 처리*/
+/*weare 영역 끝*/
+
+/*work 영역 시작*/
+.work-section .section-title {
+text-align:left;
+margin-left:3%;
+}
+.work-section li {
+width:25%;
+}
+/*work 영역 끝*/
+/*blog영역 시작*/
+.blog-section {
+margin-left:3%;
+margin-right:3%;
+}
+.blog-section h1{
+float:left;
+margin-top:30px;
+}
+.blog-section .container{
+float:right;/*li리스트태그에 적용했던 방식이라면 모두 float:left;*/
+width:80%;
+}
+/*blog영역 끝*/
+/*PC 스타일 시작*/
+@media all and (min-width:1132px) {
+.contact-section {
+margin-left:3%;
+margin-right:3%;
+}
+.contact-section h1 {
+float:left;
+margin-top:30px;
+}
+.contact-section .container {
+float:right;
+width:75%;
+}
+.contact-section form input {height:50px;}
+.contact-section form textarea {min-height:150px;}
+}
+/*PC 스타일 끝*/
+}
+/*PC용 스타일끝*/

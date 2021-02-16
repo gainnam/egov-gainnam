@@ -3,7 +3,11 @@
 <mapper namespace="memberMapper">
 
 <select id="selectMember" resultType="edu.human.com.member.service.EmployerInfoVO">
-select * from lettnemplyrinfo order by sbscrb_de desc
+select EMPLYR_ID,USER_NM,EMAIL_ADRES
+,FN_CODE_NM('COM999',EMPLYR_STTUS_CODE) AS EMPLYR_STTUS_CODE
+,SBSCRB_DE
+,FN_GROUP_NM(GROUP_ID) AS GROUP_ID
+from lettnemplyrinfo order by sbscrb_de desc
 </select>
 
 <select id="viewMember" resultType="edu.human.com.member.service.EmployerInfoVO">
@@ -17,7 +21,7 @@ USER_NM,
 PASSWORD,
 EMPL_NO,
 IHIDNUM,
-SEXDSTN,
+SEXDSTN_CODE,
 BRTHDY,
 FXNUM,
 HOUSE_ADRES,
@@ -45,7 +49,7 @@ SBSCRB_DE
 #{PASSWORD},
 #{EMPL_NO},
 #{IHIDNUM},
-#{SEXDSTN},
+#{SEXDSTN_CODE},
 #{BRTHDY},
 #{FXNUM},
 #{HOUSE_ADRES},
@@ -78,7 +82,7 @@ PASSWORD=#{PASSWORD},
 </if>
 EMPL_NO=#{EMPL_NO},
 IHIDNUM=#{IHIDNUM},
-SEXDSTN=#{SEXDSTN},
+SEXDSTN_CODE=#{SEXDSTN_CODE},
 BRTHDY=#{BRTHDY},
 FXNUM=#{FXNUM},
 HOUSE_ADRES=#{HOUSE_ADRES},

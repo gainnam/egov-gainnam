@@ -25,8 +25,9 @@ public class MemberDAO extends EgovComAbstractMapper {
 		return selectOne("memberMapper.viewMember", emplyr_id);
 	}
 
-	public void deleteMember(String emplyr_id) throws Exception {
-		delete("memberMapper.deleteMember", emplyr_id);
+	public int deleteMember(String emplyr_id) throws Exception {
+		//affected된 row값이 변환됩니다.
+		return delete("memberMapper.deleteMember", emplyr_id);
 	}
 
 	public void insertMember(EmployerInfoVO employerInfoVO) throws Exception {
