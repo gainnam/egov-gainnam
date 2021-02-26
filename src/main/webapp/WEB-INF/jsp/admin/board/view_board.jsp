@@ -44,7 +44,7 @@
                 </p>
 				<!-- 부트스트랩 오른쪽여백주기클래스명mr-1:(margin-right: .25rem!important;) -->
                 <hr>
-                <strong><i class="fas fa-pencil-alt mr-1"></i> 작성자</strong>
+                <strong><i class="fas fa-pencil-alt mr-1"></i>${result.frstRegisterNm}</strong>
                 <p class="text-muted">
                 ${result.ntcrId}
                 </p>
@@ -104,7 +104,9 @@ $(document).ready(function() {
 		
 	});
 	$("#btn_update").on("click", function() {
-		alert("준비 중인 기능입니다");
+		//alert("준비 중인 기능입니다");
+		action_form.attr("action","<c:url value='/admin/board/update_board_form.do' />");
+		action_form.submit();
 });
 });
 </script>
