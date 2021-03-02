@@ -9,12 +9,12 @@
       <div class="container-fluid">
         <div class="row mb-2">
           <div class="col-sm-6">
-            <h1 class="m-0">${brdMstrVO.bbsNm} 게시글수정</h1>
+            <h1 class="m-0">${brdMstrVO.bbsNm} 게시글등록</h1>
           </div><!-- /.col -->
           <div class="col-sm-6">
             <ol class="breadcrumb float-sm-right">
               <li class="breadcrumb-item"><a href="#">Home</a></li>
-              <li class="breadcrumb-item active">${brdMstrVO.bbsNm} 게시글수정</li>
+              <li class="breadcrumb-item active">${brdMstrVO.bbsNm} 게시글등록</li>
             </ol>
           </div><!-- /.col -->
         </div><!-- /.row -->
@@ -30,44 +30,35 @@
           <div class="col-12"><!-- 그리드시스템중 12가로칼럼 width:100% -->
           
           <!-- form start -->
-          <form name="update_form" action="<c:url value='/admin/board/update_board.do' />" method="post" encType="multipart/form-data">
+          <form name="insert_form" action="<c:url value='/admin/board/insert_board.do' />" method="post" encType="multipart/form-data">
           
           <div class="card card-primary">
               <div class="card-header">
-                <h3 class="card-title">UPDATE Board</h3>
+                <h3 class="card-title">INSERT Board</h3>
               </div>
               <!-- /.card-header -->
               
                 <div class="card-body">
                   <div class="form-group">
                     <label for="nttSj">title</label>
-                    <input value="${result.nttSj}" type="text" class="form-control" name="nttSj" id="nttSj" placeholder="제목을 입력해 주세요." required>
+                    <input type="text" class="form-control" name="nttSj" id="nttSj" placeholder="제목을 입력해 주세요." required>
                     <!-- 폼에서 input같은 입력태그에는 name속성이 반드시 필요, 이유는 DB에 입력할때,
                     	 값을 전송하게 되는데, 전송값을 담아두는 이름이 name가 되고, 위에서는 user_id 입니다. -->
                   </div>
                   <div class="form-group">
                   	<label for="nttCn">Content</label>
-                  	<textarea rows="5" name="nttCn" id="nttCn" class="form-control">${result.nttCn}</textarea>
+                  	<textarea rows="5" name="nttCn" id="nttCn" class="form-control"></textarea>
                   	<!-- 필수입력 값은 html5에서 지원하는 유효성 검사중 required 속성을 사용해서 빈(null)값체크(유효성검사)를 합니다. -->
                   </div>
                   <div class="form-group">
                   	<label for="frstRegisterNm">writer</label>
-                  	<input value="${result.frstRegisterNm}" type="text" class="form-control" name="frstRegisterNm" id="frstRegisterNm
+                  	<input value="${LoginVO.name}" type="text" class="form-control" name="frstRegisterNm" id="frstRegisterNm
 " placeholder="작성자를 입력해 주세요" required>
                   </div>
                   <div class="form-group" style="margin-bottom:0px;">
                   <label>attach</label>
                   </div>
                   <div class="custom-file">
-	                  <c:if test="${not empty result.atchFileId}">
-			                <hr><br>
-			                <strong><i class="far fa-save mr-1"></i> 첨부파일</strong>
-			                <p class="text-muted">
-			                <c:import url="/cmm/fms/selectFileInfs.do" charEncoding="utf-8">
-			                    <c:param name="param_atchFileId" value="${result.atchFileId}" />
-			                </c:import>
-			                </p>
-		                </c:if>
                     <input type="file" name="file" class="custom-file-input" id="customFile">
                     <label class="custom-file-label" for="customFile" style="color:#999;">파일첨부</label>
                   </div>
@@ -79,16 +70,12 @@
           <!-- 버튼영역 시작 -->
             <div class="card-body">
             	<button id="btn_list" type="button" class="btn btn-primary float-right mr-1">목록</button>
-            	<button id="btn_view" type="button" class="btn btn-success float-right mr-1">이전</button>
-              	<button type="submit" class="btn btn-danger float-right mr-1">수정</button>              	
+              	<button type="submit" class="btn btn-danger float-right mr-1">등록</button>              	
               	<!-- a태그는 링크이동은 되지만, post값을 전송하지는 못합니다. 그래서, button태그를 사용. -->
             </div>
           <!-- 버튼영역 끝 -->
-          
-		    <input type="hidden" name="pageIndex" value="<c:out value='${searchVO.pageIndex}'/>"/>
-			<input type="hidden" name="returnUrl" value="<c:url value='/cop/bbs/forUpdateBoardArticle.do'/>"/>
-			<input type="hidden" name="bbsId" value="<c:out value='${result.bbsId}'/>" />
-			<input type="hidden" name="nttId" value="<c:out value='${result.nttId}'/>" />
+      	    <input name="pageIndex" type="hidden" value="<c:out value='${searchVO.pageIndex}'/>"/>
+			<input type="hidden" name="bbsId" value="<c:out value='${bdMstr.bbsId}'/>" />
 			<input type="hidden" name="bbsAttrbCode" value="<c:out value='${bdMstr.bbsAttrbCode}'/>" />
 			<input type="hidden" name="bbsTyCode" value="<c:out value='${bdMstr.bbsTyCode}'/>" />
 			<input type="hidden" name="replyPosblAt" value="<c:out value='${bdMstr.replyPosblAt}'/>" />
@@ -96,14 +83,13 @@
 			<input type="hidden" name="posblAtchFileNumber" value="<c:out value='${bdMstr.posblAtchFileNumber}'/>" />
 			<input type="hidden" name="posblAtchFileSize" value="<c:out value='${bdMstr.posblAtchFileSize}'/>" />
 			<input type="hidden" name="tmplatId" value="<c:out value='${bdMstr.tmplatId}'/>" />
+			<input type="hidden" name="cal_url" value="<c:url value='/sym/cmm/EgovNormalCalPopup.do'/>" />
+			<input type="hidden" name="authFlag" value="<c:out value='${bdMstr.authFlag}'/>" />
 			<input type="hidden" name="ntcrNm" value="dummy">   <!-- validator 처리를 위해 지정 -->
 			<input type="hidden" name="password" value="dummy"> <!-- validator 처리를 위해 지정 -->
-			 
-          	<input name="ntceBgnde" type="hidden" value="10000101">
+			<input name="ntceBgnde" type="hidden" value="10000101">
 		    <input name="ntceEndde" type="hidden" value="99991231">
-          	
-			
-			<input type="hidden" name="fileSn" value="0">
+ 		    <input type="hidden" name="fileSn" value="0">
           </form>
           <!-- 폼내부에 버튼이 있어야지만, 전송버튼이 작동 됩니다. -->
           
@@ -129,18 +115,13 @@ $(document).ready(function () {
 
 <script>
 $(document).ready(function(){
-	var update_form = $("form[name='update_form']");
+	var insert_form = $("form[name='insert_form']");
 	$("#btn_list").on("click", function() {
 		//alert("목록 버튼");
-		update_form.attr("action", "<c:url value='/admin/board/list_board.do' />");
-		update_form.submit();
+		insert_form.attr("action", "<c:url value='/admin/board/list_board.do' />");
+		insert_form.submit();
 	});
-	$("#btn_view").on("click", function() {
-		//alert("이전 버튼");
-		update_form.attr("action", "<c:url value='/admin/board/view_board.do' />");
-		update_form.submit();
-	});
-});u
+});
 
 </script>
 <script>
