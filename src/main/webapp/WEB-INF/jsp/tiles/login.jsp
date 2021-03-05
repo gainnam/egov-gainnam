@@ -18,7 +18,7 @@
 		<!-- 메인본문영역 -->
 		<div class="bodytext_area box_inner">
 			<!-- 폼영역 -->
-			<form method="POST" name="login_form" action="<c:url value='/uat/uia/actionLogin.do'/>" class="appForm">
+			<form method="POST" name="login_form" action="<c:url value='/login_action.do' />" class="appForm">
 				<fieldset>
 					<legend>로그인폼</legend>
 					<p class="info_pilsoo pilsoo_item">필수입력</p>

@@ -56,21 +56,10 @@ $(document).ready(function() {
 				</ul>	
 				<nav>
 				<ul class="gnb clear">
-					<li><a href="board_list.html" class="openAll1">샘플홈페이지</a>
-                        <div class="gnb_depth gnb_depth2_1">
-                            <ul class="submenu_list">
-                                <li><a href="board_list.html">반응형 홈페이지</a></li>
-                            </ul>
-                        </div>
+					<li><a href="<c:url value='/' />tiles/board/list_board.do?bbsId=BBSMSTR_AAAAAAAAAAAA" class="openAll1">공지사항</a>
 					</li>
-					<li><a href="board_list.html" class="openAll2">커뮤니티</a>
-				        <div class="gnb_depth gnb_depth2_2">
-                            <ul class="submenu_list">
-                                <li><a href="board_list.html">공지사항</a></li>
-                                <li><a href="board_list.html">갤러리게시판</a></li>
-                            </ul>
-                        </div>
-                        </li>
+					<li><a href="<c:url value='/' />tiles/board/list_board.do?bbsId=BBSMSTR_BBBBBBBBBBBB" class="openAll2">갤러리</a>
+                    </li>
 				</ul>
                 </nav>
 				<p class="closePop"><a href="javascript:;">닫기</a></p>
