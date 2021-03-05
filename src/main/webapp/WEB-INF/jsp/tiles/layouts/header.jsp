@@ -23,9 +23,9 @@
 
 </style>
 <script>
-$(document).ready(function() {
-	
-});
+if("${msg}" != "") {
+	alert("${msg} 이(가) 성공했습니다");
+}
 </script>
 </head>
 <body>

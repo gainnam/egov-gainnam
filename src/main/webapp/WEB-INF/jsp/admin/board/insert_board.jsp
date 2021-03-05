@@ -52,7 +52,7 @@
                   </div>
                   <div class="form-group">
                   	<label for="frstRegisterNm">writer</label>
-                  	<input value="${LoginVO.name}" type="text" class="form-control" name="frstRegisterNm" id="frstRegisterNm
+                  	<input disabled value="${LoginVO.name}" type="text" class="form-control" name="frstRegisterNm" id="frstRegisterNm
 " placeholder="작성자를 입력해 주세요" required>
                   </div>
                   <div class="form-group" style="margin-bottom:0px;">
