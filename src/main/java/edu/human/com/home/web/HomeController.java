@@ -1,17 +1,24 @@
 package edu.human.com.home.web;
 
+import java.io.BufferedInputStream;
 import java.io.File;
+import java.io.FileInputStream;
+import java.util.Arrays;
 import java.util.List;
 import java.util.Map;
 
 import javax.inject.Inject;
+import javax.servlet.http.HttpServletRequest;
+import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.io.output.ByteArrayOutputStream;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Controller;
 import org.springframework.ui.ModelMap;
 import org.springframework.validation.BindingResult;
 import org.springframework.web.bind.annotation.ModelAttribute;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.support.SessionStatus;
 import org.springframework.web.context.request.RequestAttributes;
 import org.springframework.web.context.request.RequestContextHolder;
@@ -59,6 +66,59 @@ public class HomeController {
 	@Autowired
 	private EgovFileMngService fileMngService;
 	
+	@RequestMapping("/tiles/board/previewImage.do")
+	public void previewImage(HttpServletRequest request, HttpServletResponse response, @RequestParam("atchFileId") String atchFileId) throws Exception {
+		FileVO fileVO = new FileVO();
+		fileVO.setAtchFileId(atchFileId);
+		for(int cnt=0;cnt<3;cnt++) {
+			fileVO.setFileSn(Integer.toString(cnt));
+			fileVO = fileMngService.selectFileInf(fileVO);
+			if(fileVO != null) {
+				break;
+			}
+		}
+		File file = null;
+		//첨부파일 확장자가 이미지가 아닐 때, 액박이미지 대신 대체할 이미지 지정
+		String[] imgCheck = {"jpg", "jpeg", "gif", "png"};
+		boolean boolCheck = Arrays.asList(imgCheck).contains(fileVO.getFileExtsn().toLowerCase());
+		if (boolCheck == false) {//첨부파일이 이미지가 아닐 때
+			//System.out.println("확장자 디버그: " + fileVO.getFileExtsn().toLowerCase());
+			//위에서 구한 첨부파일 저장위치, 저장파일명을 가지고, 화면에 뿌려짐-스트리밍(아래) 
+			String path = request.getServletContext().getRealPath("/resources/home/img");
+			System.out.println("디버그_경로: " + path);
+			file = new File(path + "/no_image.png");
+		}else {
+			//위에서 구한 첨부파일 저장위치, 저장파일명을 가지고, 화면에 뿌려짐-스트리밍(아래) 
+			file = new File(fileVO.getFileStreCours(),fileVO.getStreFileNm());
+		}
+		//스트리밍에 필요한 클래스 변수(오브젝트객체) 생성(아래 3가지)
+		FileInputStream fis = new FileInputStream(file);//저장된파일을 스트림클래스를 이용해서 읽어들임
+		BufferedInputStream bis = new BufferedInputStream(fis);//fis인풋스트림을 받아서 버퍼에 저장
+		ByteArrayOutputStream baos = new ByteArrayOutputStream();
+		int imgByte;//while반복문의 반복조건에 사용될 변수
+		while( (imgByte=bis.read()) != -1 ) {
+			baos.write(imgByte);
+		}
+		//여기까지가 출력버퍼 baos객체에 이미지내용을 임시저장한 상태
+		
+		String type = "";//type변수 초기화
+		if(fileVO.getFileExtsn() !=null && !"".equals(fileVO.getFileExtsn()) ) {
+			//첨부파일 확장이름 존재하면, 이미지파일을 체크함(아래)
+			if("jpg".equals(fileVO.getFileExtsn().toLowerCase())) {
+				type = "image/jpeg";//jpg != jpeg 이름이 틀려서
+			} else {
+				type = "imge/" + fileVO.getFileExtsn().toLowerCase();
+			}
+		}
+		//브라우저에서 출력하는 response응답코드(아래)
+		response.setHeader("Content-Type", type);
+		response.setContentLength(baos.size());
+		
+		baos.writeTo(response.getOutputStream());//실제출력전송
+		
+		response.getOutputStream().flush();//실제화면출력됨
+		response.getOutputStream().close();//응답객체종료하기
+	}
 	@RequestMapping("/tiles/board/update_board.do")
 	public String update_board(RedirectAttributes rdat, final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
 		    @ModelAttribute("bdMstr") BoardMaster bdMstr, @ModelAttribute("board") Board board, BindingResult bindingResult, ModelMap model,
@@ -407,8 +467,30 @@ public class HomeController {
 	}
 	//method.RequestMethod=get/post없이 사용하면 둘 다 허용되는 매핑
 	@RequestMapping("/tiles/home.do")
-	public String home() throws Exception {
+	public String home(ModelMap model) throws Exception {
+		//메인페이지에 최근 게시물 출력하는 서비스 호출 전 get/set
+		BoardVO boardVO = new BoardVO();
+		Map<String, Object> boardMap = null;
+		boardVO.setPageUnit(3);//1페이지 당 출력할 갯수
+		boardVO.setPageSize(10);//리스트 하단 페이징표시갯수
+		boardVO.setBbsId("BBSMSTR_BBBBBBBBBBBB");//갤러리게시판 id
 		
+		PaginationInfo paginationInfo = new PaginationInfo();
+		paginationInfo.setCurrentPageNo(boardVO.getPageIndex());
+		paginationInfo.setRecordCountPerPage(boardVO.getPageUnit());
+		paginationInfo.setPageSize(boardVO.getPageSize());
+		boardVO.setFirstIndex(paginationInfo.getFirstRecordIndex());
+		boardVO.setLastIndex(paginationInfo.getLastRecordIndex());
+		boardVO.setRecordCountPerPage(paginationInfo.getRecordCountPerPage());
+
+		boardMap = bbsMngService.selectBoardArticles(boardVO, "BBSA02");
+		System.out.println("debug" + boardMap.size());
+		model.addAttribute("galleryList", boardMap.get("resultList"));	
+		
+		boardVO.setPageUnit(5);
+		boardVO.setBbsId("BBSMSTR_AAAAAAAAAAAA");
+		boardMap = bbsMngService.selectBoardArticles(boardVO, "BBSA02");
+		model.addAttribute("noticeList", boardMap.get("resultList"));
 		return "home.tiles";
 	}
 }
