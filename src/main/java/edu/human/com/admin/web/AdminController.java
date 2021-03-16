@@ -67,13 +67,13 @@ public class AdminController {
 	@Autowired
 	private EgovFileMngUtil fileUtil;
 	
-	//게시물 등록 화면 호출 post
+	//게시물 등록 폼화면 호출 POST
 	@RequestMapping("/admin/board/insert_board_form.do")
 	public String insert_board_form(@ModelAttribute("searchVO") BoardVO boardVO, ModelMap model) throws Exception {
 		// 사용자권한 처리
-		if(!EgovUserDetailsHelper.isAuthenticated()) {
-			model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-	    	return "cmm/uat/uia/EgovLoginUsr";
+		if(!commUtil.getAuthorities()) {
+			model.addAttribute("msg", "관리자그룹만 접근이 가능합니다.\\n사용자 홈페이지로 이동");
+	    	return "home.tiles";
 		}
 
 	    LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
@@ -100,17 +100,18 @@ public class AdminController {
 
 		model.addAttribute("brdMstrVO", bdMstr);
 		////-----------------------------
+
 		return "admin/board/insert_board";
 	}
-	//게시물 등록 처리 호출 post
+	//게시물 등록 DAO처리 호출 POST
 	@RequestMapping("/admin/board/insert_board.do")
 	public String insert_board(final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
 		    @ModelAttribute("bdMstr") BoardMaster bdMstr, @ModelAttribute("board") Board board, BindingResult bindingResult, SessionStatus status,
 		    ModelMap model) throws Exception {
 		// 사용자권한 처리
-		if(!EgovUserDetailsHelper.isAuthenticated()) {
-			model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-	    	return "cmm/uat/uia/EgovLoginUsr";
+		if(!commUtil.getAuthorities()) {
+			model.addAttribute("msg", "관리자그룹만 접근이 가능합니다.\\n사용자 홈페이지로 이동");
+	    	return "home.tiles";
 		}
 
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
@@ -163,17 +164,18 @@ public class AdminController {
 		}
 		return "redirect:/admin/board/list_board.do?bbsId="+board.getBbsId();
 	}
-	//게시물 수정 처리 호출 post
+	
+	//게시물 수정 처리 호출 POST
 	@RequestMapping("/admin/board/update_board.do")
 	public String update_board(final MultipartHttpServletRequest multiRequest, @ModelAttribute("searchVO") BoardVO boardVO,
 		    @ModelAttribute("bdMstr") BoardMaster bdMstr, @ModelAttribute("board") Board board, BindingResult bindingResult, ModelMap model,
 		    SessionStatus status) throws Exception {
 
 	    	// 사용자권한 처리
-	    	if(!EgovUserDetailsHelper.isAuthenticated()) {
-	    		model.addAttribute("message", egovMessageSource.getMessage("fail.common.login"));
-	        	return "cmm/uat/uia/EgovLoginUsr";
-	    	}
+		if(!commUtil.getAuthorities()) {
+			model.addAttribute("msg", "관리자그룹만 접근이 가능합니다.\\n사용자 홈페이지로 이동");
+	    	return "home.tiles";
+		}
 
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
 		Boolean isAuthenticated = EgovUserDetailsHelper.isAuthenticated();
@@ -203,21 +205,21 @@ public class AdminController {
 
 		if (isAuthenticated) {
 		    final Map<String, MultipartFile> files = multiRequest.getFileMap();
-		    if (!files.isEmpty()) {//첨부파일이 있을 때
-		    	//기존 첨부파일이 존재x
-			if ("".equals(atchFileId)) {
-				System.out.println("디버그 1: " + atchFileId);
-			    List<FileVO> result = fileUtil.parseFileInf(files, "BBS_", 0, atchFileId, "");
-			    atchFileId = fileMngService.insertFileInfs(result);
-			    board.setAtchFileId(atchFileId);
-			} else {//기존 첨부파일 존재 o -> 기존삭제하고 신규등록
-				System.out.println("디버그 2: " + atchFileId);
-			    FileVO fvo = new FileVO();
-			    fvo.setAtchFileId(atchFileId);
-			    int cnt = fileMngService.getMaxFileSN(fvo);
-			    List<FileVO> _result = fileUtil.parseFileInf(files, "BBS_", cnt, atchFileId, "");
-			    fileMngService.updateFileInfs(_result);
-			}
+		    if (!files.isEmpty()) {//첨부파일이 있을때 작동
+		    	//기존 첨부파일이 존재하지 않으면 신규등록
+				if ("".equals(atchFileId)) {
+					System.out.println("디버그1:-기존첨부파일이 없을경우 신규등록시 사용"+atchFileId);
+				    List<FileVO> result = fileUtil.parseFileInf(files, "BBS_", 0, atchFileId, "");
+				    atchFileId = fileMngService.insertFileInfs(result);
+				    board.setAtchFileId(atchFileId);
+				} else {//기본첨부파일이 존재하면 기존것 보존하고, 다시 신규등록
+					System.out.println("디버그2:"+atchFileId);
+				    FileVO fvo = new FileVO();
+				    fvo.setAtchFileId(atchFileId);
+				    int cnt = fileMngService.getMaxFileSN(fvo);
+				    List<FileVO> _result = fileUtil.parseFileInf(files, "BBS_", cnt, atchFileId, "");
+				    fileMngService.updateFileInfs(_result);
+				}
 		    }
 
 		    board.setLastUpdusrId(user.getUniqId());
@@ -230,14 +232,14 @@ public class AdminController {
 		
 	    BoardVO bdvo = new BoardVO();
 	    bdvo = bbsMngService.selectBoardArticle(boardVO);
-	    
-		return "redirect:/admin/board/view_board.do?bbsId="+bdvo.getBbsId()
-		+"&nttId="+bdvo.getNttId()+"&bbsTyCode="+bdvo.getBbsTyCode()+"&bbsAttrbCode="+bdvo.getBbsAttrbCode()
-		+"&authFlag=Y"+"&pageIndex="+bdvo.getPageIndex();
+
+	    return "redirect:/admin/board/view_board.do?bbsId="+bdvo.getBbsId()
+		+"&nttId="+bdvo.getNttId()+"&bbsTyCode="+bdvo.getBbsTyCode()
+		+"&bbsAttrbCode="+bdvo.getBbsAttrbCode()+"&authFlag=Y"
+		+"&pageIndex="+bdvo.getPageIndex();	
 		//return "redirect:/admin/board/list_board.do?bbsId="+board.getBbsId();
 	}
-	
-	//게시물 수정 화면을 호출
+	//게시물 수정 화면을 호출 POST
 	@RequestMapping("/admin/board/update_board_form.do")
 	public String update_board(@ModelAttribute("searchVO") BoardVO boardVO, @ModelAttribute("board") BoardVO vo, ModelMap model)
 		    throws Exception {
@@ -289,9 +291,10 @@ public class AdminController {
 			//fileVO.setAtchFileId(boardVO.getAtchFileId());
 			//fileMngService.deleteAllFileInf(fileVO);//USE_AT='N'삭제X
 			//물리파일지우려면 2가지값 필수: file_stre_cours, stre_file_nm
-			//실제 폴더에서 파일도 삭제(아래)
-			if(fileVO.getAtchFileId() !=null && fileVO.getAtchFileId() != "") {
-				FileVO delfileVO = fileMngService.selectFileInf(fileVO);
+			//실제 폴더에서 파일도 삭제(아래 1개만 삭제하는 로직 -> 여러개 삭제하는 로직 변경)
+			List<FileVO> fileList = fileMngService.selectFileInfs(fileVO);
+			for(FileVO oneFileVO:fileList) {
+				FileVO delfileVO = fileMngService.selectFileInf(oneFileVO);
 				File target = new File(delfileVO.getFileStreCours(), delfileVO.getStreFileNm());
 				if(target.exists()) {
 					target.delete();//폴더에서 기존첨부파일 지우기
@@ -302,7 +305,6 @@ public class AdminController {
 			boardService.delete_attach(boardVO.getAtchFileId());//게시물에 딸린 첨부파일테이블 2개 레코드삭제
 		}
 		//게시물 레코드삭제(아래)
-		
 		boardService.delete_board((int)boardVO.getNttId());
 		rdat.addFlashAttribute("msg", "삭제");
 		return "redirect:/admin/board/list_board.do?bbsId="+boardVO.getBbsId();
@@ -356,6 +358,7 @@ public class AdminController {
 		
 		return "admin/board/view_board";
 	}
+	
 	@RequestMapping("/admin/board/list_board.do")
 	public String list_board(@ModelAttribute("searchVO") BoardVO boardVO, ModelMap model) throws Exception {
 		LoginVO user = (LoginVO)EgovUserDetailsHelper.getAuthenticatedUser();
@@ -455,7 +458,7 @@ public class AdminController {
 	@RequestMapping(value="/admin/member/update_member.do",method=RequestMethod.POST)
 	public String update_member(EmployerInfoVO memberVO,RedirectAttributes rdat) throws Exception {
 		//회원 수정 페이지 DB처리
-		if(memberVO.getPASSWORD() != null) {
+		if(memberVO.getPASSWORD() != null && !"".equals(memberVO.getPASSWORD())) {
 			String formPassword = memberVO.getPASSWORD();//GET
 			String encPassword = EgovFileScrty.encryptPassword(formPassword, memberVO.getEMPLYR_ID());
 			memberVO.setPASSWORD(encPassword);//SET
@@ -482,7 +485,11 @@ public class AdminController {
 		return "admin/member/list_member";
 	}
 	@RequestMapping(value="/admin/home.do", method=RequestMethod.GET)
-	public String home() throws Exception {
+	public String home(Model model) throws Exception {
+		if(!commUtil.getAuthorities()) {
+			model.addAttribute("msg", "관리자그룹만 접근이 가능합니다.\\n사용자 홈페이지로 이동");
+	    	return "home.tiles";
+		}
 		//관리자메인 페이지로 이동
 		return "admin/home";
 	}

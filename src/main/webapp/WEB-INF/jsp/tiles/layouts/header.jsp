@@ -46,13 +46,20 @@ if("${msg}" != "") {
 					<li><a href="<c:url value='/cmm/main/mainPage.do' />">OLD전자정부사이트</a></li>
 					<c:if test="${LoginVO.id eq null || LoginVO.id eq ''}">
 					<li><a href="<c:url value='/tiles/login.do' />">로그인</a></li>
-					<li><a href="<c:url value='/tiles/join.do' />">회원가입</a></li>
+					<li><a href="<c:url value='/tiles/join_form.do' />">회원가입</a></li>
 					</c:if>
 					<c:if test="${LoginVO.id ne null}">
 					<!-- 로그인 후 보이는 메뉴(아래) -->
-					<li><a href="#">${LoginVO.name}님 환영합니다.</a></li>
+					<li><a href="<c:url value='/tiles/member/mypage_form.do' />" title="마이페이지">
+						${LoginVO.name} 님 환영합니다.
+						</a></li>
 					<li><a href="<c:url value='/logout.do'/>">로그아웃</a></li>
+					<c:if test="${ROLE_ADMIN ne null}">
 					<li><a href="<c:url value='/admin/home.do' />">AdminLTE</a></li>
+					</c:if>
+					<c:if test="${ROLE_ADMIN eq null}">
+					<li><a href="<c:url value='/tiles/member/mypage_form.do' />">Mypage</a></li>
+					</c:if>
 					</c:if>
 				</ul>	
 				<nav>
