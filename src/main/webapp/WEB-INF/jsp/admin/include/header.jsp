@@ -32,9 +32,13 @@
   <!-- summernote -->
   <link rel="stylesheet" href="<c:url value='/' />resources/plugins/summernote/summernote-bs4.min.css">
 <script>
+if("${param.msg_security }" == "2") {
+	alert("접근 권한이 없습니다. 메인페이지로 이동합니다.");
+}
 if("${msg}"!="") { //RedirectAttributes 로 컨트롤러에서 보내온 값을 출력
 	alert("${msg}가(이) 성공하였습니다.");
 }
+
 </script>
 </head>
 <body class="hold-transition sidebar-mini layout-fixed">
