@@ -83,7 +83,7 @@ public class AdminController {
 		//업데이트 서비스 호출
 		authorRoleService.updateAuthorRole(authorRoleVO);
 		rdat.addFlashAttribute("msg", "수정");
-		return "redirect:/admin/authorrole/view_author.do?page="+pageVO.getPage()+"&AUTHORROLE_ID"+authorRoleVO.getAUTHORROLE_ID();
+		return "redirect:/admin/authorrole/view_author.do?page="+pageVO.getPage()+"&authorrole_id="+authorRoleVO.getAUTHORROLE_ID();
 	}
 	//권한 관리 상세보기 호출 GET
 	@RequestMapping(value="/admin/authorrole/view_author.do", method = RequestMethod.GET)
