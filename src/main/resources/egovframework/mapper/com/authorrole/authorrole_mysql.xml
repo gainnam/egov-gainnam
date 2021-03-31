@@ -44,7 +44,7 @@ AUTHORROLE_DC,
 SORT_ORDR,
 USE_AT
 )values(
-(SELECT AUTHORROLE_ID+1 FROM sht.authorrole order by AUTHORROLE_ID desc limit 1),
+(SELECT AUTHORROLE_ID+1 FROM authorrole order by AUTHORROLE_ID desc limit 1),
 #{ROLE_PTTRN},
 #{AUTHOR_CODE},
 #{AUTHORROLE_DC},

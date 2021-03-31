@@ -10,7 +10,13 @@ import edu.human.com.util.PageVO;
 
 @Repository
 public class AuthorRoleDAO extends EgovComAbstractMapper{
-
+	
+	public void deleteAuthorRole(int AUTHORROLE_ID) throws Exception {
+		delete("authorroleMapper.deleteAuthorRole", AUTHORROLE_ID);
+	}
+	public void insertAuthorRole(AuthorRoleVO authorRoleVO) throws Exception {
+		 insert("authorroleMapper.insertAuthorRole", authorRoleVO);
+	}
 	public AuthorRoleVO viewAuthorRole(int AUTHORROLE_ID) throws Exception {
 		return selectOne("authorroleMapper.viewAuthorRole", AUTHORROLE_ID);
 	}
